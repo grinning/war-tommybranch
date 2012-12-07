@@ -43,7 +43,7 @@ import com.tommytony.war.structure.ZoneLobby;
 import com.tommytony.war.utility.LoadoutSelection;
 
 /**
- * @author tommytony, Tim Düsterhus
+ * @author tommytony, Tim D��sterhus
  * @package bukkit.tommytony.war
  */
 public class WarPlayerListener implements Listener {
@@ -390,21 +390,25 @@ public class WarPlayerListener implements Listener {
 					int eastWestMove = 0;
 					int upDownMove = 0;
 					int moveDistance = 1;
-					
-					if (nearestWalls.contains(BlockFace.NORTH)) {
+					//if /*<statement>*/ then legacy code, there just so double checks can be made
+					if (nearestWalls.contains((War.legacyBlockFace) ? BlockFace.NORTH : BlockFace.WEST)) {
 						// move south
-						northSouthMove += moveDistance;
-					} else if (nearestWalls.contains(BlockFace.SOUTH)) {
+						/*northSouthMove += moveDistance;*/
+						northSouthMove += (War.legacyBlockFace) ? moveDistance : -moveDistance;
+					} else if (nearestWalls.contains((War.legacyBlockFace) ? BlockFace.SOUTH : BlockFace.EAST)) {
 						// move north
-						northSouthMove -= moveDistance;
+						/*northSouthMove -= moveDistance;*/
+						northSouthMove -= (War.legacyBlockFace) ? moveDistance : -moveDistance;
 					} 
 					
-					if (nearestWalls.contains(BlockFace.EAST)) {
+					if (nearestWalls.contains((War.legacyBlockFace) ? BlockFace.EAST : BlockFace.NORTH)) {
 						// move west
-						eastWestMove += moveDistance;
-					} else if (nearestWalls.contains(BlockFace.WEST)) {
+						/*eastWestMove += moveDistance;*/
+						eastWestMove += (War.legacyBlockFace) ? moveDistance : -moveDistance;
+					} else if (nearestWalls.contains((War.legacyBlockFace) ? BlockFace.WEST : BlockFace.SOUTH)) {
 						// move east
-						eastWestMove -= moveDistance;
+						/*eastWestMove -= moveDistance;*/
+						eastWestMove -= (War.legacyBlockFace) ? moveDistance : -moveDistance;
 					} 
 					
 					if (nearestWalls.contains(BlockFace.UP)) {

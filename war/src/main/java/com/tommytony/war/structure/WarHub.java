@@ -21,7 +21,7 @@ import com.tommytony.war.volume.Volume;
 
 /**
  *
- * @author tommytony, Tim Düsterhus
+ * @author tommytony, Tim D��sterhus
  * @package com.tommytony.war
  */
 public class WarHub {
@@ -34,16 +34,16 @@ public class WarHub {
 		int yaw = 0;
 		if (hubOrientation.equals("south")) {
 			yaw = 270;
-			this.setOrientation(BlockFace.SOUTH);
+			this.setOrientation(War.legacyBlockFace ? BlockFace.SOUTH : BlockFace.EAST);
 		} else if (hubOrientation.equals("north")) {
 			yaw = 90;
-			this.setOrientation(BlockFace.NORTH);
+			this.setOrientation(War.legacyBlockFace ? BlockFace.NORTH : BlockFace.WEST);
 		} else if (hubOrientation.equals("east")) {
 			yaw = 180;
-			this.setOrientation(BlockFace.EAST);
+			this.setOrientation(War.legacyBlockFace ? BlockFace.EAST : BlockFace.NORTH);
 		} else {
-			yaw = 0;
-			this.setOrientation(BlockFace.WEST);
+			//yaw = 0; unneccessary call...
+			this.setOrientation(War.legacyBlockFace ? BlockFace.WEST : BlockFace.SOUTH);
 		}
 
 		this.location = new Location(location.getWorld(),
@@ -75,16 +75,16 @@ public class WarHub {
 		} else {
 			yaw = (int) (360 + (this.location.getYaw() % 360));
 		}
-
+		//as far as I know this update did not affect yaw
 		BlockFace facing = null;
 		if ((yaw >= 0 && yaw < 45) || (yaw >= 315 && yaw <= 360)) {
-			facing = BlockFace.WEST;
+			facing = War.legacyBlockFace ? BlockFace.WEST : BlockFace.SOUTH;
 		} else if (yaw >= 45 && yaw < 135) {
-			facing = BlockFace.NORTH;
+			facing = War.legacyBlockFace ? BlockFace.NORTH : BlockFace.WEST;
 		} else if (yaw >= 135 && yaw < 225) {
-			facing = BlockFace.EAST;
+			facing = War.legacyBlockFace ? BlockFace.EAST : BlockFace.NORTH;
 		} else if (yaw >= 225 && yaw < 315) {
-			facing = BlockFace.SOUTH;
+			facing = War.legacyBlockFace ? BlockFace.SOUTH : BlockFace.EAST;
 		}
 		this.setOrientation(facing);
 	}
@@ -210,9 +210,9 @@ public class WarHub {
 					
 					currentGateBlock.getRelative(right).getRelative(BlockFace.UP).setType(gate);
 					currentGateBlock.getRelative(right).getRelative(BlockFace.UP).setData(gateData);
-					
-					currentGateBlock.getRelative(left).getRelative(BlockFace.UP).getRelative(BlockFace.UP).setType(gate);
-					currentGateBlock.getRelative(left).getRelative(BlockFace.UP).getRelative(BlockFace.UP).setData(gateData);
+					//merged calls into one call
+					currentGateBlock.getRelative(left).getRelative(BlockFace.UP, 2).setType(gate);
+					currentGateBlock.getRelative(left).getRelative(BlockFace.UP, 2).setData(gateData);
 					
 					currentGateBlock.getRelative(right).setType(gate);
 					currentGateBlock.getRelative(right).setData(gateData);
@@ -220,11 +220,11 @@ public class WarHub {
 					currentGateBlock.getRelative(left).getRelative(BlockFace.UP).setType(gate);
 					currentGateBlock.getRelative(left).getRelative(BlockFace.UP).setData(gateData);
 					
-					currentGateBlock.getRelative(right).getRelative(BlockFace.UP).getRelative(BlockFace.UP).setType(gate);
-					currentGateBlock.getRelative(right).getRelative(BlockFace.UP).getRelative(BlockFace.UP).setData(gateData);
+					currentGateBlock.getRelative(right).getRelative(BlockFace.UP, 2).setType(gate);
+					currentGateBlock.getRelative(right).getRelative(BlockFace.UP, 2).setData(gateData);
 					
-					currentGateBlock.getRelative(BlockFace.UP).getRelative(BlockFace.UP).setType(gate);
-					currentGateBlock.getRelative(BlockFace.UP).getRelative(BlockFace.UP).setData(gateData);
+					currentGateBlock.getRelative(BlockFace.UP, 2).setType(gate);
+					currentGateBlock.getRelative(BlockFace.UP, 2).setData(gateData);
 					
 					currentGateBlock = currentGateBlock.getRelative(right, 4);
 

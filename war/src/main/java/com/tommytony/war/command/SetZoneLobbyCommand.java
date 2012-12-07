@@ -15,7 +15,7 @@ import com.tommytony.war.structure.ZoneLobby;
 /**
  * Places the zonelobby
  *
- * @author Tim Düsterhus
+ * @author Tim D��sterhus
  */
 public class SetZoneLobbyCommand extends AbstractZoneMakerCommand {
 
@@ -77,9 +77,11 @@ public class SetZoneLobbyCommand extends AbstractZoneMakerCommand {
 				return false;
 			}
 			ZoneLobby lobby = zone.getLobby();
-
-			BlockFace wall = BlockFace.WEST;
+			
+			//this can be basically the same since Bukkit/Bukkit@ 49690f9 actually corrects block directions
+			//don't depend on using this perfectly though because you should update
 			String wallStr = "";
+		    BlockFace wall = (War.legacyBlockFace) ? BlockFace.WEST : BlockFace.SOUTH;
 			if (this.args[0].equals("north") || this.args[0].equals("n")) {
 				wall = BlockFace.NORTH;
 				wallStr = "north";

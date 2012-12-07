@@ -745,22 +745,38 @@ public class Warzone {
 		List<BlockFace> walls = new ArrayList<BlockFace>();
 		if (Math.abs(this.volume.getSoutheastZ() - latestPlayerLocation.getBlockZ()) < this.minSafeDistanceFromWall && latestPlayerLocation.getBlockX() <= this.volume.getSoutheastX() && latestPlayerLocation.getBlockX() >= this.volume.getNorthwestX() && latestPlayerLocation.getBlockY() >= this.volume.getMinY() && latestPlayerLocation.getBlockY() <= this.volume.getMaxY()) {
 			// near east wall
-			walls.add(BlockFace.EAST);
+			if(War.legacyBlockFace) {
+				walls.add(BlockFace.EAST);
+			} else {
+				walls.add(BlockFace.NORTH);
+			}
 		}
 
 		if (Math.abs(this.volume.getSoutheastX() - latestPlayerLocation.getBlockX()) < this.minSafeDistanceFromWall && latestPlayerLocation.getBlockZ() <= this.volume.getNorthwestZ() && latestPlayerLocation.getBlockZ() >= this.volume.getSoutheastZ() && latestPlayerLocation.getBlockY() >= this.volume.getMinY() && latestPlayerLocation.getBlockY() <= this.volume.getMaxY()) {
 			// near south wall
-			walls.add(BlockFace.SOUTH);
+			if(War.legacyBlockFace) {
+			    walls.add(BlockFace.SOUTH);
+			} else {
+				walls.add(BlockFace.EAST);
+			}
 		}
 
 		if (Math.abs(this.volume.getNorthwestX() - latestPlayerLocation.getBlockX()) < this.minSafeDistanceFromWall && latestPlayerLocation.getBlockZ() <= this.volume.getNorthwestZ() && latestPlayerLocation.getBlockZ() >= this.volume.getSoutheastZ() && latestPlayerLocation.getBlockY() >= this.volume.getMinY() && latestPlayerLocation.getBlockY() <= this.volume.getMaxY()) {
 			// near north wall
-			walls.add(BlockFace.NORTH);
+			if(War.legacyBlockFace) {
+			    walls.add(BlockFace.NORTH);
+			} else {
+				walls.add(BlockFace.WEST);
+			}
 		}
 
 		if (Math.abs(this.volume.getNorthwestZ() - latestPlayerLocation.getBlockZ()) < this.minSafeDistanceFromWall && latestPlayerLocation.getBlockX() <= this.volume.getSoutheastX() && latestPlayerLocation.getBlockX() >= this.volume.getNorthwestX() && latestPlayerLocation.getBlockY() >= this.volume.getMinY() && latestPlayerLocation.getBlockY() <= this.volume.getMaxY()) {
 			// near west wall
-			walls.add(BlockFace.WEST);
+			if(War.legacyBlockFace) {
+			    walls.add(BlockFace.WEST);
+			} else {
+				walls.add(BlockFace.SOUTH);
+			}
 		}
 
 		if (Math.abs(this.volume.getMaxY() - latestPlayerLocation.getBlockY()) < this.minSafeDistanceFromWall && latestPlayerLocation.getBlockX() <= this.volume.getMaxX() && latestPlayerLocation.getBlockX() >= this.volume.getMinX() && latestPlayerLocation.getBlockZ() <= this.volume.getMaxZ() && latestPlayerLocation.getBlockZ() >= this.volume.getMinZ()) {

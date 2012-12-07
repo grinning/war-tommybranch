@@ -23,6 +23,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.block.BlockFace;
 
 import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.config.FlagReturn;
@@ -57,7 +58,7 @@ import com.tommytony.war.utility.WarLogFormatter;
 /**
  * Main class of War
  *
- * @author tommytony, Tim Düsterhus
+ * @author tommytony, Tim D��sterhus, grinning
  * @package bukkit.tommytony.war
  */
 public class War extends JavaPlugin {
@@ -100,6 +101,17 @@ public class War extends JavaPlugin {
 
 	private HubLobbyMaterials warhubMaterials = new HubLobbyMaterials(20, (byte)0, 5, (byte)0, 49, (byte)0, 89, (byte)0);	// default floor glass, outline planks, gate obsidian, light glowstone
 
+	//static final variables
+	public static final boolean legacyBlockFace;
+	
+	//code to be executed when the classloader loads the class
+	//the bukkit api will already be in the system
+	//the JavaPlugin instance for this plugin will not be present however
+	static {
+		//legacy block face detection
+		legacyBlockFace = (BlockFace.NORTH.getModX() == -1) ? true : false;
+	}
+	
 	public War() {
 		super();
 		War.war = this;

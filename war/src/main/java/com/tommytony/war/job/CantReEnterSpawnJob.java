@@ -81,7 +81,7 @@ public class CantReEnterSpawnJob implements Runnable {
 				// not air at destination, lets find somewhere nearby with air
 				int zeroToSeven = rand.nextInt(8);
 				int distanceAwayMultiplier = 3 + attempts/10;
-				
+		        /*Doesn't need to be changed because implementation comes from an RNG anyway*/
 				switch (zeroToSeven) {
 					case 0: 
 						nextCandidateBlock = playerTeam.getTeamSpawn().getBlock().getRelative(BlockFace.WEST, distanceAwayMultiplier);

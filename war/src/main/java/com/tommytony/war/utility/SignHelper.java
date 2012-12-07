@@ -32,5 +32,4 @@ public class SignHelper {
 			// just can't stand this anymore
 		}
 	}
-
 }

@@ -249,7 +249,7 @@ public class ZoneSetter {
 			
 			if (warzone.getLobby() == null) {
 				// Set default lobby on south side
-				ZoneLobby lobby = new ZoneLobby(warzone, BlockFace.SOUTH);
+				ZoneLobby lobby = new ZoneLobby(warzone, (War.legacyBlockFace) ? BlockFace.SOUTH : BlockFace.EAST);
 				warzone.setLobby(lobby);
 				if (War.war.getWarHub() != null) { // warhub has to change
 					War.war.getWarHub().getVolume().resetBlocks();

@@ -176,7 +176,7 @@ public class ZoneVolume extends Volume {
 		if (!this.hasTwoCorners()) {
 			return 0;
 		} else {
-			return this.getMinZ();
+			return (War.legacyBlockFace ? this.getMinZ() : this.getMaxZ());
 		}
 	}
 
@@ -258,34 +258,75 @@ public class ZoneVolume extends Volume {
 		return false;
 	}
 
+	//TODO: OPTIMIZE THIS METHOD, THIS IS SLOW AND IMPRACTICAL
 	public boolean isWallBlock(Block block) {
 		return this.isEastWallBlock(block) || this.isNorthWallBlock(block) || this.isSouthWallBlock(block) || this.isWestWallBlock(block) || this.isUpWallBlock(block) || this.isDownWallBlock(block);
 	}
 
 	public boolean isEastWallBlock(Block block) {
-		if (this.getMinZ() == block.getZ() && block.getX() <= this.getMaxX() && block.getX() >= this.getMinX() && block.getY() >= this.getMinY() && block.getY() <= this.getMaxY()) {
+		if(War.legacyBlockFace) {
+		if (this.getMinZ()== block.getZ() &&
+				block.getX() <= this.getMaxX() && block.getX() >= this.getMinX() &&
+				block.getY() >= this.getMinY() && block.getY() <= this.getMaxY()) {
 			return true; // east wall
+		}
+		} else {
+			if(this.getMaxZ() >= block.getZ() && block.getZ() >= this.getMaxZ() &&
+					this.getMaxX() == block.getX() && 
+					block.getY() >= this.getMinY() && block.getY() <= this.getMaxY()) {
+				return true; //east wall for new dirs
+			}
 		}
 		return false;
 	}
 
 	public boolean isSouthWallBlock(Block block) {
-		if (this.getMaxX() == block.getX() && block.getZ() <= this.getMaxZ() && block.getZ() >= this.getMinZ() && block.getY() >= this.getMinY() && block.getY() <= this.getMaxY()) {
+		if(War.legacyBlockFace) {
+		if (this.getMaxX() == block.getX() && 
+				block.getZ() <= this.getMaxZ() && block.getZ() >= this.getMinZ() &&
+				block.getY() >= this.getMinY() && block.getY() <= this.getMaxY()) {
 			return true; // south wall
+		}
+		} else {
+			if(this.getMaxZ() == block.getZ() &&
+					block.getX() <= this.getMaxX() && block.getX() >= this.getMinZ() &&
+					block.getY() >= this.getMinY() && block.getY() <= this.getMaxY()) {
+				return true; //south wall for new dirs
+			}
 		}
 		return false;
 	}
 
 	public boolean isNorthWallBlock(Block block) {
-		if (this.getMinX() == block.getX() && block.getZ() <= this.getMaxZ() && block.getZ() >= this.getMinZ() && block.getY() >= this.getMinY() && block.getY() <= this.getMaxY()) {
+		if(War.legacyBlockFace) {
+		if (this.getMinX() == block.getX() &&
+				block.getZ() <= this.getMaxZ() && block.getZ() >= this.getMinZ() &&
+				block.getY() >= this.getMinY() && block.getY() <= this.getMaxY()) {
 			return true; // north wall
+		}
+		} else {
+			if(this.getMinZ() == block.getZ() &&
+					block.getX() <= this.getMaxX() && block.getX() >= this.getMinX() &&
+					block.getY() >= this.getMinY() && block.getY() <= this.getMaxY()) {
+				return true; //north wall for new dirs
+			}
 		}
 		return false;
 	}
 
 	public boolean isWestWallBlock(Block block) {
-		if (this.getMaxZ() == block.getZ() && block.getX() <= this.getMaxX() && block.getX() >= this.getMinX() && block.getY() >= this.getMinY() && block.getY() <= this.getMaxY()) {
+		if(War.legacyBlockFace) {
+		if (this.getMaxZ() == block.getZ() &&
+				block.getX() <= this.getMaxX() && block.getX() >= this.getMinX() &&
+				block.getY() >= this.getMinY() && block.getY() <= this.getMaxY()) {
 			return true; // west wall
+		}
+		} else {
+			if(this.getMinX() == block.getX() &&
+					block.getZ() <= this.getMaxZ() && block.getZ() >= this.getMinZ() &&
+					block.getY() >= this.getMinY() && block.getY() <= this.getMaxY()) {
+				return true; //west wall for new dirs
+			}
 		}
 		return false;
 	}

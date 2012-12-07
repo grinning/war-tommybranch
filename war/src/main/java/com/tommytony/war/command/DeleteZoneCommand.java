@@ -14,7 +14,7 @@ import com.tommytony.war.structure.ZoneLobby;
 /**
  * Deletes a warzone.
  *
- * @author Tim Düsterhus
+ * @author Tim D��sterhus
  */
 public class DeleteZoneCommand extends AbstractZoneMakerCommand {
 	public DeleteZoneCommand(WarCommandHandler handler, CommandSender sender, String[] args) throws NotZoneMakerException {

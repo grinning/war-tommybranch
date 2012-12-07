@@ -93,16 +93,16 @@ public class ZoneLobby {
 		}
 		this.wall = wall;
 		this.setVolume(volume);
-
+		/*Going to assume that the constructor already takes already correct BlockFace calculations*/
 		// we're setting the zoneVolume directly, so we need to figure out the lobbyMiddleWallBlock on our own
 		if (wall == BlockFace.NORTH) {
-			this.lobbyMiddleWallBlock = new BlockInfo(BlockInfo.getBlock(warzone.getWorld(), volume.getCornerOne()).getRelative(BlockFace.UP).getRelative(BlockFace.EAST, this.lobbyHalfSide));
+			this.lobbyMiddleWallBlock = new BlockInfo(BlockInfo.getBlock(warzone.getWorld(), volume.getCornerOne()).getRelative(BlockFace.UP).getRelative(War.legacyBlockFace ? BlockFace.EAST : BlockFace.NORTH, this.lobbyHalfSide));
 		} else if (wall == BlockFace.EAST) {
-			this.lobbyMiddleWallBlock = new BlockInfo(BlockInfo.getBlock(warzone.getWorld(), volume.getCornerOne()).getRelative(BlockFace.UP).getRelative(BlockFace.SOUTH, this.lobbyHalfSide));
+			this.lobbyMiddleWallBlock = new BlockInfo(BlockInfo.getBlock(warzone.getWorld(), volume.getCornerOne()).getRelative(BlockFace.UP).getRelative(War.legacyBlockFace ? BlockFace.SOUTH : BlockFace.EAST, this.lobbyHalfSide));
 		} else if (wall == BlockFace.SOUTH) {
-			this.lobbyMiddleWallBlock = new BlockInfo(BlockInfo.getBlock(warzone.getWorld(), volume.getCornerOne()).getRelative(BlockFace.UP).getRelative(BlockFace.WEST, this.lobbyHalfSide));
+			this.lobbyMiddleWallBlock = new BlockInfo(BlockInfo.getBlock(warzone.getWorld(), volume.getCornerOne()).getRelative(BlockFace.UP).getRelative(War.legacyBlockFace ? BlockFace.WEST : BlockFace.SOUTH, this.lobbyHalfSide));
 		} else if (wall == BlockFace.WEST) {
-			this.lobbyMiddleWallBlock = new BlockInfo(BlockInfo.getBlock(warzone.getWorld(), volume.getCornerOne()).getRelative(BlockFace.UP).getRelative(BlockFace.NORTH, this.lobbyHalfSide));
+			this.lobbyMiddleWallBlock = new BlockInfo(BlockInfo.getBlock(warzone.getWorld(), volume.getCornerOne()).getRelative(BlockFace.UP).getRelative(War.legacyBlockFace ? BlockFace.NORTH : BlockFace.WEST, this.lobbyHalfSide));
 		}
 	}
 
@@ -138,17 +138,37 @@ public class ZoneLobby {
 		BlockFace facing = null;
 		BlockFace opposite = null;
 		if ((yaw >= 0 && yaw < 45) || (yaw >= 315 && yaw <= 360)) {
-			facing = BlockFace.WEST;
-			opposite = BlockFace.EAST;
+			if(War.legacyBlockFace) {
+			    facing = BlockFace.WEST;
+			    opposite = BlockFace.EAST;
+			} else {
+				facing = BlockFace.SOUTH;
+			    opposite = BlockFace.NORTH;
+			}
 		} else if (yaw >= 45 && yaw < 135) {
-			facing = BlockFace.NORTH;
-			opposite = BlockFace.SOUTH;
+			if(War.legacyBlockFace) {
+			    facing = BlockFace.NORTH;
+			    opposite = BlockFace.SOUTH;
+			} else {
+				facing = BlockFace.WEST;
+				opposite = BlockFace.EAST;
+			}
 		} else if (yaw >= 135 && yaw < 225) {
-			facing = BlockFace.EAST;
-			opposite = BlockFace.WEST;
+			if(War.legacyBlockFace) {
+			    facing = BlockFace.EAST;
+			    opposite = BlockFace.WEST;
+			} else {
+				facing = BlockFace.NORTH;
+				opposite = BlockFace.SOUTH;
+			}
 		} else if (yaw >= 225 && yaw < 315) {
-			facing = BlockFace.SOUTH;
-			opposite = BlockFace.NORTH;
+			if(War.legacyBlockFace) {
+			    facing = BlockFace.SOUTH;
+			    opposite = BlockFace.NORTH;
+			} else {
+				facing = BlockFace.EAST;
+				opposite = BlockFace.WEST;
+			}
 		}
 
 		this.wall = opposite; // a player facing south places a lobby that looks just like a lobby stuck to the north wall
@@ -161,19 +181,23 @@ public class ZoneLobby {
 		int x = this.lobbyMiddleWallBlock.getX();
 		int y = this.lobbyMiddleWallBlock.getY();
 		int z = this.lobbyMiddleWallBlock.getZ();
-
-		if (this.wall == BlockFace.NORTH) {
-			corner1 = lobbyWorld.getBlockAt(x, y - 1, z + this.lobbyHalfSide);
-			corner2 = lobbyWorld.getBlockAt(x - this.lobbyDepth, y + 1 + this.lobbyHeight, z - this.lobbyHalfSide);
+		if (this.wall == BlockFace.NORTH) { //going westernly and one down
+			corner1 = lobbyWorld.getBlockAt(War.legacyBlockFace ? x : x - this.lobbyHalfSide, y - 1, War.legacyBlockFace ? z + this.lobbyHalfSide : z);
+			                                 //going northly and up to top of lobby and eastly
+			corner2 = lobbyWorld.getBlockAt(War.legacyBlockFace ? x - this.lobbyDepth : x + this.lobbyHalfSide , y + 1 + this.lobbyHeight, War.legacyBlockFace ? z - this.lobbyHalfSide : z - this.lobbyDepth);
 		} else if (this.wall == BlockFace.EAST) {
-			corner1 = lobbyWorld.getBlockAt(x - this.lobbyHalfSide, y - 1, z);
-			corner2 = lobbyWorld.getBlockAt(x + this.lobbyHalfSide, y + 1 + this.lobbyHeight, z - this.lobbyDepth);
-		} else if (this.wall == BlockFace.SOUTH) {
-			corner1 = lobbyWorld.getBlockAt(x, y - 1, z - this.lobbyHalfSide);
-			corner2 = lobbyWorld.getBlockAt(x + this.lobbyDepth, y + 1 + this.lobbyHeight, z + this.lobbyHalfSide);
-		} else if (this.wall == BlockFace.WEST) {
-			corner1 = lobbyWorld.getBlockAt(x + this.lobbyHalfSide, y - 1, z);
-			corner2 = lobbyWorld.getBlockAt(x - this.lobbyHalfSide, y + 1 + this.lobbyHeight, z + this.lobbyDepth);
+			                                 //going northly and one down
+			corner1 = lobbyWorld.getBlockAt(War.legacyBlockFace ? x - this.lobbyHalfSide : x, y - 1, War.legacyBlockFace ? z : z - this.lobbyHalfSide);
+							                 //going southernly and up to the top of lobby and eastly
+			corner2 = lobbyWorld.getBlockAt(War.legacyBlockFace ? x + this.lobbyHalfSide : x + this.lobbyDepth, y + 1 + this.lobbyHeight, War.legacyBlockFace ? z - this.lobbyDepth : z + this.lobbyHalfSide);
+		} else if (this.wall == BlockFace.SOUTH) { //going down one and eastly
+			corner1 = lobbyWorld.getBlockAt(War.legacyBlockFace ? x : x + this.lobbyHalfSide, y - 1, War.legacyBlockFace ? z - this.lobbyHalfSide : z);
+													//going eastly and up to top of lobby and westernly
+			corner2 = lobbyWorld.getBlockAt(War.legacyBlockFace ? x + this.lobbyDepth : x - this.lobbyHalfSide, y + 1 + this.lobbyHeight, War.legacyBlockFace ? z + this.lobbyHalfSide : z + this.lobbyDepth);
+		} else if (this.wall == BlockFace.WEST) { //going southly
+			corner1 = lobbyWorld.getBlockAt(War.legacyBlockFace ? x + this.lobbyHalfSide : x, y - 1, War.legacyBlockFace ? z : z + this.lobbyHalfSide);
+												  //going northly and westly
+			corner2 = lobbyWorld.getBlockAt(War.legacyBlockFace ? x - this.lobbyHalfSide : x - this.lobbyDepth, y + 1 + this.lobbyHeight, War.legacyBlockFace ? z + this.lobbyDepth : z - this.lobbyHeight);
 		}
 
 		this.saveLobbyBlocks(corner1, corner2);
@@ -202,8 +226,12 @@ public class ZoneLobby {
 			int wallCenterPos = wallStart + wallLength / 2;
 			int y = zoneVolume.getCenterY();
 			this.lobbyMiddleWallBlock = new BlockInfo(this.warzone.getWorld().getBlockAt(x, y, wallCenterPos));
-			corner1 = this.warzone.getWorld().getBlockAt(x, y - 1, wallCenterPos + this.lobbyHalfSide);
-			corner2 = this.warzone.getWorld().getBlockAt(x - this.lobbyDepth, y + 1 + this.lobbyHeight, wallCenterPos - this.lobbyHalfSide);
+			int z = wallCenterPos; //setting up an alias so I can copy the code above and paste it here instead of doing
+			//the math again
+			/*corner1 = this.warzone.getWorld().getBlockAt(x, y - 1, wallCenterPos + this.lobbyHalfSide);*/
+			/*corner2 = this.warzone.getWorld().getBlockAt(x - this.lobbyDepth, y + 1 + this.lobbyHeight, wallCenterPos - this.lobbyHalfSide);*/
+			corner1 = this.warzone.getWorld().getBlockAt(War.legacyBlockFace ? x : x - this.lobbyHalfSide, y - 1, War.legacyBlockFace ? z + this.lobbyHalfSide : z);
+            corner2 = this.warzone.getWorld().getBlockAt(War.legacyBlockFace ? x - this.lobbyDepth : x + this.lobbyHalfSide , y + 1 + this.lobbyHeight, War.legacyBlockFace ? z - this.lobbyHalfSide : z - this.lobbyDepth);
 		} else if (this.wall == BlockFace.EAST) {
 			int wallStart = zoneVolume.getMinX();
 			int wallEnd = zoneVolume.getMaxX();
@@ -212,8 +240,11 @@ public class ZoneLobby {
 			int wallCenterPos = wallStart + wallLength / 2;
 			int y = zoneVolume.getCenterY();
 			this.lobbyMiddleWallBlock = new BlockInfo(this.warzone.getWorld().getBlockAt(wallCenterPos, y, z));
-			corner1 = this.warzone.getWorld().getBlockAt(wallCenterPos - this.lobbyHalfSide, y - 1, z);
-			corner2 = this.warzone.getWorld().getBlockAt(wallCenterPos + this.lobbyHalfSide, y + 1 + this.lobbyHeight, z - this.lobbyDepth);
+			/*corner1 = this.warzone.getWorld().getBlockAt(wallCenterPos - this.lobbyHalfSide, y - 1, z);*/
+			/*corner2 = this.warzone.getWorld().getBlockAt(wallCenterPos + this.lobbyHalfSide, y + 1 + this.lobbyHeight, z - this.lobbyDepth);*/
+			int x = wallCenterPos; //alias so this code is compatible for copy and paste from above code
+			corner1 = this.warzone.getWorld().getBlockAt(War.legacyBlockFace ? x - this.lobbyHalfSide : x, y - 1, War.legacyBlockFace ? z : z - this.lobbyHalfSide);
+            corner2 = this.warzone.getWorld().getBlockAt(War.legacyBlockFace ? x + this.lobbyHalfSide : x + this.lobbyDepth, y + 1 + this.lobbyHeight, War.legacyBlockFace ? z - this.lobbyDepth : z + this.lobbyHalfSide);
 		} else if (this.wall == BlockFace.SOUTH) {
 			int wallStart = zoneVolume.getMinZ();
 			int wallEnd = zoneVolume.getMaxZ();
@@ -222,8 +253,12 @@ public class ZoneLobby {
 			int wallCenterPos = wallStart + wallLength / 2;
 			int y = zoneVolume.getCenterY();
 			this.lobbyMiddleWallBlock = new BlockInfo(this.warzone.getWorld().getBlockAt(x, y, wallCenterPos));
-			corner1 = this.warzone.getWorld().getBlockAt(x, y - 1, wallCenterPos - this.lobbyHalfSide);
-			corner2 = this.warzone.getWorld().getBlockAt(x + this.lobbyDepth, y + 1 + this.lobbyHeight, wallCenterPos + this.lobbyHalfSide);
+			/*corner1 = this.warzone.getWorld().getBlockAt(x, y - 1, wallCenterPos - this.lobbyHalfSide);*/
+			/*corner2 = this.warzone.getWorld().getBlockAt(x + this.lobbyDepth, y + 1 + this.lobbyHeight, wallCenterPos + this.lobbyHalfSide);*/
+			int z = wallCenterPos; //alias so this code is compatible for copy and paste from above
+			corner1 = this.warzone.getWorld().getBlockAt(War.legacyBlockFace ? x : x + this.lobbyHalfSide, y - 1, War.legacyBlockFace ? z - this.lobbyHalfSide : z);
+			//going eastly and up to top of lobby and westernly
+            corner2 = this.warzone.getWorld().getBlockAt(War.legacyBlockFace ? x + this.lobbyDepth : x - this.lobbyHalfSide, y + 1 + this.lobbyHeight, War.legacyBlockFace ? z + this.lobbyHalfSide : z + this.lobbyDepth);
 		} else if (this.wall == BlockFace.WEST) {
 			int wallStart = zoneVolume.getMinX();
 			int wallEnd = zoneVolume.getMaxX();
@@ -232,8 +267,11 @@ public class ZoneLobby {
 			int wallCenterPos = wallStart + wallLength / 2;
 			int y = zoneVolume.getCenterY();
 			this.lobbyMiddleWallBlock = new BlockInfo(this.warzone.getWorld().getBlockAt(wallCenterPos, y, z));
-			corner1 = this.warzone.getWorld().getBlockAt(wallCenterPos + this.lobbyHalfSide, y - 1, z);
-			corner2 = this.warzone.getWorld().getBlockAt(wallCenterPos - this.lobbyHalfSide, y + 1 + this.lobbyHeight, z + this.lobbyDepth);
+			/*corner1 = this.warzone.getWorld().getBlockAt(wallCenterPos + this.lobbyHalfSide, y - 1, z);*/
+			/*corner2 = this.warzone.getWorld().getBlockAt(wallCenterPos - this.lobbyHalfSide, y + 1 + this.lobbyHeight, z + this.lobbyDepth);*/
+			int x = wallCenterPos; //alias so this code is compatible for copy and paste from above
+			corner1 = this.warzone.getWorld().getBlockAt(War.legacyBlockFace ? x + this.lobbyHalfSide : x, y - 1, War.legacyBlockFace ? z : z + this.lobbyHalfSide);
+            corner2 = this.warzone.getWorld().getBlockAt(War.legacyBlockFace ? x - this.lobbyHalfSide : x - this.lobbyDepth, y + 1 + this.lobbyHeight, War.legacyBlockFace ? z + this.lobbyDepth : z - this.lobbyHeight);
 		}
 
 		this.saveLobbyBlocks(corner1, corner2);
@@ -319,13 +357,13 @@ public class ZoneLobby {
 			// set zone tp
 			this.zoneTeleportBlock = new BlockInfo(BlockInfo.getBlock(this.volume.getWorld(), this.lobbyMiddleWallBlock).getRelative(this.wall, 6));
 			int yaw = 0;
-			if (this.wall == BlockFace.WEST) {
+			if (this.wall == (War.legacyBlockFace ? BlockFace.WEST : BlockFace.SOUTH)) {
 				yaw = 180;
-			} else if (this.wall == BlockFace.SOUTH) {
+			} else if (this.wall == (War.legacyBlockFace ? BlockFace.SOUTH : BlockFace.EAST)) {
 				yaw = 90;
-			} else if (this.wall == BlockFace.EAST) {
+			} else if (this.wall == (War.legacyBlockFace ? BlockFace.EAST : BlockFace.NORTH)) {
 				yaw = 0;
-			} else if (this.wall == BlockFace.NORTH) {
+			} else if (this.wall == (War.legacyBlockFace ? BlockFace.NORTH : BlockFace.WEST)) {
 				yaw = 270;
 			}
 			this.warzone.setTeleport(new Location(this.volume.getWorld(), this.zoneTeleportBlock.getX(), this.zoneTeleportBlock.getY(), this.zoneTeleportBlock.getZ(), yaw, 0));
@@ -371,13 +409,13 @@ public class ZoneLobby {
 			// set zone sign
 			Block zoneSignBlock = BlockInfo.getBlock(this.volume.getWorld(), this.lobbyMiddleWallBlock).getRelative(this.wall, 4);
 			byte data = 0;
-			if (this.wall == BlockFace.NORTH) {
+			if (this.wall == (War.legacyBlockFace ? BlockFace.NORTH : BlockFace.WEST)) {
 				data = (byte) 4;
-			} else if (this.wall == BlockFace.EAST) {
+			} else if (this.wall == (War.legacyBlockFace ? BlockFace.EAST : BlockFace.SOUTH)) {
 				data = (byte) 8;
-			} else if (this.wall == BlockFace.SOUTH) {
+			} else if (this.wall == (War.legacyBlockFace ? BlockFace.SOUTH : BlockFace.EAST)) {
 				data = (byte) 12;
-			} else if (this.wall == BlockFace.WEST) {
+			} else if (this.wall == (War.legacyBlockFace ? BlockFace.WEST : BlockFace.NORTH)) {
 				data = (byte) 0;
 			}
 			String[] lines = new String[4];
@@ -395,18 +433,18 @@ public class ZoneLobby {
 			// lets get some light in here
 			Material light = Material.getMaterial(this.warzone.getLobbyMaterials().getLightId());
 			byte lightData = this.warzone.getLobbyMaterials().getLightData();
-			if (this.wall == BlockFace.NORTH || this.wall == BlockFace.SOUTH) {
-				Block one = BlockInfo.getBlock(this.volume.getWorld(), this.lobbyMiddleWallBlock).getRelative(BlockFace.DOWN).getRelative(BlockFace.WEST, this.lobbyHalfSide - 1).getRelative(this.wall, 9);
+			if (this.wall == (War.legacyBlockFace ? BlockFace.NORTH : BlockFace.WEST) || this.wall == (War.legacyBlockFace ? BlockFace.SOUTH : BlockFace.EAST)) {
+				Block one = BlockInfo.getBlock(this.volume.getWorld(), this.lobbyMiddleWallBlock).getRelative(BlockFace.DOWN).getRelative(War.legacyBlockFace ? BlockFace.WEST : BlockFace.SOUTH, this.lobbyHalfSide - 1).getRelative(this.wall, 9);
 				one.setType(light);
 				one.setData(lightData);
-				Block two = BlockInfo.getBlock(this.volume.getWorld(), this.lobbyMiddleWallBlock).getRelative(BlockFace.DOWN).getRelative(BlockFace.EAST, this.lobbyHalfSide - 1).getRelative(this.wall, 9);
+				Block two = BlockInfo.getBlock(this.volume.getWorld(), this.lobbyMiddleWallBlock).getRelative(BlockFace.DOWN).getRelative(War.legacyBlockFace ? BlockFace.EAST : BlockFace.NORTH, this.lobbyHalfSide - 1).getRelative(this.wall, 9);
 				two.setType(light);
 				two.setData(lightData);
 			} else {
-				Block one = BlockInfo.getBlock(this.volume.getWorld(), this.lobbyMiddleWallBlock).getRelative(BlockFace.DOWN).getRelative(BlockFace.NORTH, this.lobbyHalfSide - 1).getRelative(this.wall, 9);
+				Block one = BlockInfo.getBlock(this.volume.getWorld(), this.lobbyMiddleWallBlock).getRelative(BlockFace.DOWN).getRelative(War.legacyBlockFace ? BlockFace.NORTH : BlockFace.WEST, this.lobbyHalfSide - 1).getRelative(this.wall, 9);
 				one.setType(light);
 				one.setData(lightData);
-				Block two = BlockInfo.getBlock(this.volume.getWorld(), this.lobbyMiddleWallBlock).getRelative(BlockFace.DOWN).getRelative(BlockFace.SOUTH, this.lobbyHalfSide - 1).getRelative(this.wall, 9);
+				Block two = BlockInfo.getBlock(this.volume.getWorld(), this.lobbyMiddleWallBlock).getRelative(BlockFace.DOWN).getRelative(War.legacyBlockFace ? BlockFace.SOUTH : BlockFace.EAST, this.lobbyHalfSide - 1).getRelative(this.wall, 9);
 				two.setType(light);
 				two.setData(lightData);
 			}
@@ -418,6 +456,7 @@ public class ZoneLobby {
 	private void setGatePositions(Block lobbyMiddleWallBlock) {
 		BlockFace leftSide = null; // look at the zone
 		BlockFace rightSide = null;
+		//this should be fine legacy or not
 		if (this.wall == BlockFace.NORTH) {
 			leftSide = BlockFace.EAST;
 			rightSide = BlockFace.WEST;
@@ -466,7 +505,8 @@ public class ZoneLobby {
 			BlockFace front = this.wall;
 			BlockFace leftSide = null; // looking at the zone
 			BlockFace rightSide = null;
-			
+			//TODO: REWRITE THIS TO USE A CUSTOM DATATYPE INSTEAD OF EXECUTING THE SAME BLOCK OF 
+			//CODE IN 400 PLACES
 			if (this.wall == BlockFace.NORTH) {
 				leftSide = BlockFace.EAST;
 				rightSide = BlockFace.WEST;
@@ -561,6 +601,7 @@ public class ZoneLobby {
 			BlockFace leftSide = null; // lookingat the zone
 			BlockFace rightSide = null;
 			
+			//TODO: 5th time I've seen the same block of code in this class
 			if (this.wall == BlockFace.NORTH) {
 				leftSide = BlockFace.EAST;
 				rightSide = BlockFace.WEST;
@@ -670,6 +711,7 @@ public class ZoneLobby {
 		if (gateBlock != null) {
 			BlockFace leftSide = null; // look at the zone
 			BlockFace rightSide = null;
+			//TODO: 6th time
 			if (this.wall == BlockFace.NORTH) {
 				leftSide = BlockFace.EAST;
 				rightSide = BlockFace.WEST;
@@ -717,6 +759,7 @@ public class ZoneLobby {
 	private void resetGateSign(Block gate, String[] lines, boolean awayFromWall) {
 		Block block = null;
 		BlockFace direction = null;
+		//TODO: 2nd time i've seen this particular code block repeated over and over
 		if (awayFromWall) {
 			direction = this.wall;
 		} else if (this.wall == BlockFace.NORTH) {
@@ -730,28 +773,28 @@ public class ZoneLobby {
 		}
 		byte data = 0;
 		if (this.wall == BlockFace.NORTH) {
-			block = gate.getRelative(direction).getRelative(BlockFace.EAST);
+			block = gate.getRelative(direction).getRelative(War.legacyBlockFace ? BlockFace.EAST : BlockFace.NORTH);
 			if (awayFromWall) {
 				data = (byte) 4;
 			} else {
 				data = (byte) 12;
 			}
 		} else if (this.wall == BlockFace.EAST) {
-			block = gate.getRelative(direction).getRelative(BlockFace.SOUTH);
+			block = gate.getRelative(direction).getRelative(War.legacyBlockFace ? BlockFace.SOUTH : BlockFace.EAST);
 			if (awayFromWall) {
 				data = (byte) 8;
 			} else {
 				data = (byte) 0;
 			}
 		} else if (this.wall == BlockFace.SOUTH) {
-			block = gate.getRelative(direction).getRelative(BlockFace.WEST);
+			block = gate.getRelative(direction).getRelative(War.legacyBlockFace ? BlockFace.WEST : BlockFace.SOUTH);
 			if (awayFromWall) {
 				data = (byte) 12;
 			} else {
 				data = (byte) 4;
 			}
 		} else if (this.wall == BlockFace.WEST) {
-			block = gate.getRelative(direction).getRelative(BlockFace.NORTH);
+			block = gate.getRelative(direction).getRelative(War.legacyBlockFace ? BlockFace.NORTH : BlockFace.WEST);
 			if (awayFromWall) {
 				data = (byte) 0;
 			} else {
@@ -766,6 +809,7 @@ public class ZoneLobby {
 		BlockFace inside = null;
 		BlockFace left = null;
 		BlockFace right = null;
+		//TODO: I will count this as the 7th time i've seen this and 3rd time i've seen it b/c both of them are in this one
 		if (this.wall == BlockFace.NORTH) {
 			inside = BlockFace.SOUTH;
 			left = BlockFace.WEST;

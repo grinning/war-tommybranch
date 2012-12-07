@@ -16,6 +16,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
+import com.tommytony.war.War;
 import com.tommytony.war.utility.DeferredBlockReset;
 import com.tommytony.war.volume.Volume;
 
@@ -150,12 +151,22 @@ public class DeferredBlockResetsJob implements Runnable {
 			}
 		}
 	}
-
+    //legacy code is commented like this for reference /*<code>*/ 
 	private void scrubDroppedDoors(Block block) {
 		Chunk chunk = block.getWorld().getChunkAt(block);
 		Volume scrubVolume = new Volume("scrub", block.getWorld());
-		scrubVolume.setCornerOne(block.getRelative(BlockFace.DOWN).getRelative(BlockFace.EAST).getRelative(BlockFace.NORTH));
-		scrubVolume.setCornerTwo(block.getRelative(BlockFace.UP).getRelative(BlockFace.WEST).getRelative(BlockFace.SOUTH));
+		/*scrubVolume.setCornerOne(block.getRelative(BlockFace.DOWN).getRelative(BlockFace.EAST).getRelative(BlockFace.NORTH));*/
+		/*scrubVolume.setCornerTwo(block.getRelative(BlockFace.UP).getRelative(BlockFace.WEST).getRelative(BlockFace.SOUTH));*/
+		Block corner1 = block.getWorld().getBlockAt(block.getX(), block.getY() - 1, block.getZ());
+		Block corner2 = block.getWorld().getBlockAt(block.getX(), block.getY() + 1, block.getZ());
+		if(War.legacyBlockFace) { //optimized with calls to non-cardinal directions instead of only cardinal directions
+			scrubVolume.setCornerOne(corner1.getRelative(BlockFace.NORTH_EAST));
+			scrubVolume.setCornerTwo(corner2.getRelative(BlockFace.SOUTH_WEST));
+		} else {
+			scrubVolume.setCornerOne(corner1.getRelative(BlockFace.NORTH_WEST));
+			scrubVolume.setCornerTwo(corner2.getRelative(BlockFace.SOUTH_EAST));
+		}
+		
 		for (Entity entity : chunk.getEntities()) {
 			if ((entity instanceof Item && (((Item)entity).getItemStack().getTypeId() == Material.IRON_DOOR.getId() 
 												|| ((Item)entity).getItemStack().getTypeId() == Material.WOOD_DOOR.getId()))
