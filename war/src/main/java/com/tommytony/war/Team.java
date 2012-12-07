@@ -216,6 +216,7 @@ public class Team {
 			this.setBlock(x - 2, y - 1, z - 1, this.kind);
 			this.setBlock(x - 2, y - 1, z - 2, this.kind);
 
+			//go to this link to see code https://github.com/grinning/war-tommybranch/commit/4d1dc5d5ed37d0d8f11b1a306eee05e5868f05e4
 			BlockFace facing = null;
 			BlockFace opposite = null;
 			if (yaw >= 0 && yaw < 90) {
